@@ -22,7 +22,6 @@ public class App {
 
 	App() {
 		cfg = new Configuration().configure("hibernate-config.xml");
-		
 		factory = cfg.buildSessionFactory();
 	}
 
@@ -78,7 +77,6 @@ public class App {
 			System.out.println(role.getRoleName());
 		}
 		session.close();
-
 	}
 
 	void deleteRoleById() {
@@ -100,13 +98,35 @@ public class App {
 
 	}
 
+	void updateRole() {
+		Scanner scr = new Scanner(System.in);
+		System.out.println("Enter roleId");
+		int roleId = scr.nextInt();
+
+		Session session = factory.openSession();
+		RoleBean role = session.get(RoleBean.class, roleId);
+		if (role == null) {
+			System.out.println("Please Enter correct RoleId");
+		} else {
+			System.out.println("Old Role Name : " + role.getRoleName());
+			System.out.println("Enter new RoleName ");
+			String newRoleName = scr.next();
+			Transaction tx = session.beginTransaction();
+			role.setRoleName(newRoleName);
+			session.update(role);
+			tx.commit();
+
+		}
+
+	}
+
 	public static void main(String[] args) {
 		int choice = 0;
 
 		App app = new App();
 
 		while (true) {
-			System.out.println("\n0 for exit\n1 for add\n2 for list all roles\n3 for view\n4 for delete role");
+			System.out.println("\n0 for exit\n1 for add\n2 for list all roles\n3 for view\n4 for delete role\n5 for update");
 			System.out.println("Enter choice....");
 
 			Scanner scr = new Scanner(System.in);
@@ -127,6 +147,9 @@ public class App {
 				break;
 			case 4:
 				app.deleteRoleById();
+				break;
+			case 5:
+				app.updateRole();
 				break;
 			}// switch
 		} // while
